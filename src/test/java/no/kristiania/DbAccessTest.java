@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DbAccessTest {
 
-
     @Test
     void shouldListSavedProducts() throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
