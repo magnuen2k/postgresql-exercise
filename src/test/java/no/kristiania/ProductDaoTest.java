@@ -10,7 +10,7 @@ import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DbAccessTest {
+public class ProductDaoTest {
 
     @Test
     void shouldListSavedProducts() throws SQLException {
@@ -19,12 +19,12 @@ public class DbAccessTest {
 
         Flyway.configure().dataSource(dataSource).load().migrate();
 
-        DbAccess projectMemberDao = new DbAccess(dataSource);
-        String projectMemberName = samplePersonName();
+        ProductDao productDao = new ProductDao(dataSource);
+        String productName = samplePerson();
         Integer productPrice = samplePrice();
-        projectMemberDao.insertProduct(projectMemberName, productPrice);
-        assertThat(projectMemberDao.list())
-                .contains("Product: " + projectMemberName + " - Price: " + productPrice);
+        productDao.insertProduct(productName, productPrice);
+        assertThat(productDao.list())
+                .contains("Product: " + productName + " - Price: " + productPrice);
     }
 
     private Integer samplePrice() {
@@ -40,7 +40,7 @@ public class DbAccessTest {
         return prices.get(r.nextInt(prices.size()));
     }
 
-    public static String samplePersonName() {
+    public static String samplePerson() {
         ArrayList<String> names = new ArrayList<>();
         names.add("Magnus");
         names.add("Kai");

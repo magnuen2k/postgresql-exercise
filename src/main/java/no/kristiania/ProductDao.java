@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DbAccess {
+public class ProductDao {
     private final DataSource dataSource;
 
-    public DbAccess(DataSource dataSource) {
+    public ProductDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -60,7 +60,7 @@ public class DbAccess {
         dataSource.setUser("dbtestmagnus");
         dataSource.setPassword("pizza123");
 
-        DbAccess db = new DbAccess(dataSource);
+        ProductDao db = new ProductDao(dataSource);
 
         System.out.println("Add new product");
 
