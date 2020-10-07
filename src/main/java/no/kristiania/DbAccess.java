@@ -2,7 +2,6 @@ package no.kristiania;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
-import javax.sql.ConnectionEvent;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,12 +19,13 @@ public class DbAccess {
     }
 
     // Passing in sql statement - INSERT INTO - to insert data
-    public void insert(String productName) throws SQLException {
+    public void insertProduct(String productName, int productPrice) throws SQLException {
         // Make connection to database
         try (Connection connection = dataSource.getConnection()) {
             // Create statement and execute it
-            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO products (product_name) values (?)")) {
+            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO products (product_name, price) values (?, ?)")) {
                 insertStatement.setString(1, productName);
+                insertStatement.setInt(2, productPrice);
                 insertStatement.executeUpdate();
             }
         }
@@ -43,7 +43,10 @@ public class DbAccess {
                     List<String> products = new ArrayList<>();
                     // Loop through result of sql query and put each element into a list
                     while(res.next()){
-                        products.add(res.getString("product_name"));
+                        // TODO Make different method to format a better output response
+                        // Example output
+                        String product = "Product: " + res.getString("product_name") + " - Price: " + res.getString("price");
+                        products.add(product);
                     }
                     return products;
                 }
@@ -65,8 +68,11 @@ public class DbAccess {
         Scanner scanner = new Scanner(System.in);
         String productName = scanner.nextLine();
 
+        System.out.println("Add price for the product");
+        int productPrice = scanner.nextInt();
+
         // Add input from user to database
-        db.insert(productName);
+        db.insertProduct(productName, productPrice);
 
         // Display products from database
         System.out.println(db.list());

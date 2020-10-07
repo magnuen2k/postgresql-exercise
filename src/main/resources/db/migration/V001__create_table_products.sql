@@ -1,1 +1,1 @@
-create table products (product_name varchar)
+create table products (product_name varchar, price numeric )

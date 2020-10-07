@@ -2,7 +2,6 @@ package no.kristiania;
 
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -22,9 +21,23 @@ public class DbAccessTest {
 
         DbAccess projectMemberDao = new DbAccess(dataSource);
         String projectMemberName = samplePersonName();
-        projectMemberDao.insert(projectMemberName);
+        Integer productPrice = samplePrice();
+        projectMemberDao.insertProduct(projectMemberName, productPrice);
         assertThat(projectMemberDao.list())
-                .contains(projectMemberName);
+                .contains("Product: " + projectMemberName + " - Price: " + productPrice);
+    }
+
+    private Integer samplePrice() {
+        ArrayList<Integer> prices = new ArrayList<>();
+        prices.add(32);
+        prices.add(19);
+        prices.add(63);
+        prices.add(26);
+        prices.add(45);
+
+        Random r = new Random();
+
+        return prices.get(r.nextInt(prices.size()));
     }
 
     public static String samplePersonName() {
