@@ -1,5 +1,7 @@
-# postgresql-exercise
+![Java CI with Maven](https://github.com/magnuen2k/postgresql-exercise/workflows/Java%20CI%20with%20Maven/badge.svg)
 
-Testing out PostgreSQL with Java
+# postgreSQL-Exercise
 
-# ☕️☕️☕️☕️☕️☕️☕️☕️
+Testing out PostgreSQL with Java ☕️.
+
+
