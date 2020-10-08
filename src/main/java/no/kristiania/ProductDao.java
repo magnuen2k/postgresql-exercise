@@ -2,7 +2,6 @@ package no.kristiania;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
-import javax.sql.ConnectionEvent;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,20 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DbAccess {
+public class ProductDao {
     private final DataSource dataSource;
 
-    public DbAccess(DataSource dataSource) {
+    public ProductDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     // Passing in sql statement - INSERT INTO - to insert data
-    public void insert(String productName) throws SQLException {
+    public void insertProduct(Product product) throws SQLException {
         // Make connection to database
         try (Connection connection = dataSource.getConnection()) {
             // Create statement and execute it
-            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO products (product_name) values (?)")) {
-                insertStatement.setString(1, productName);
+            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO products (product_name, price) values (?, ?)")) {
+                insertStatement.setString(1, product.getProductName());
+                insertStatement.setInt(2, product.getProductPrice());
                 insertStatement.executeUpdate();
             }
         }
@@ -43,7 +43,10 @@ public class DbAccess {
                     List<String> products = new ArrayList<>();
                     // Loop through result of sql query and put each element into a list
                     while(res.next()){
-                        products.add(res.getString("product_name"));
+                        // TODO Make different method to format a better output response
+                        // Example output
+                        String product = "Product: " + res.getString("product_name") + " - Price: " + res.getString("price");
+                        products.add(product);
                     }
                     return products;
                 }
@@ -55,9 +58,10 @@ public class DbAccess {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost:5432/pizza");
         dataSource.setUser("dbtestmagnus");
-        dataSource.setPassword("pizza123");
+        dataSource.setPassword("pizza123"); // Password should be in a separate file !!
 
-        DbAccess db = new DbAccess(dataSource);
+        ProductDao db = new ProductDao(dataSource);
+        Product product = new Product();
 
         System.out.println("Add new product");
 
@@ -65,8 +69,14 @@ public class DbAccess {
         Scanner scanner = new Scanner(System.in);
         String productName = scanner.nextLine();
 
+        System.out.println("Add price for the product");
+        int productPrice = scanner.nextInt();
+
+        product.setProductName(productName);
+        product.setProductPrice(productPrice);
+
         // Add input from user to database
-        db.insert(productName);
+        db.insertProduct(product);
 
         // Display products from database
         System.out.println(db.list());
