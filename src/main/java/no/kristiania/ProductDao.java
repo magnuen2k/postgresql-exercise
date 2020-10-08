@@ -19,13 +19,13 @@ public class ProductDao {
     }
 
     // Passing in sql statement - INSERT INTO - to insert data
-    public void insertProduct(String productName, int productPrice) throws SQLException {
+    public void insertProduct(Product product) throws SQLException {
         // Make connection to database
         try (Connection connection = dataSource.getConnection()) {
             // Create statement and execute it
             try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO products (product_name, price) values (?, ?)")) {
-                insertStatement.setString(1, productName);
-                insertStatement.setInt(2, productPrice);
+                insertStatement.setString(1, product.getProductName());
+                insertStatement.setInt(2, product.getProductPrice());
                 insertStatement.executeUpdate();
             }
         }
@@ -58,9 +58,10 @@ public class ProductDao {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost:5432/pizza");
         dataSource.setUser("dbtestmagnus");
-        dataSource.setPassword("pizza123");
+        dataSource.setPassword("pizza123"); // Password should be in a separate file !!
 
         ProductDao db = new ProductDao(dataSource);
+        Product product = new Product();
 
         System.out.println("Add new product");
 
@@ -71,8 +72,11 @@ public class ProductDao {
         System.out.println("Add price for the product");
         int productPrice = scanner.nextInt();
 
+        product.setProductName(productName);
+        product.setProductPrice(productPrice);
+
         // Add input from user to database
-        db.insertProduct(productName, productPrice);
+        db.insertProduct(product);
 
         // Display products from database
         System.out.println(db.list());

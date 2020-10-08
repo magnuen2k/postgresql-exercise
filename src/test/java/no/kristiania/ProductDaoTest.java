@@ -4,6 +4,7 @@ import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -11,6 +12,14 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductDaoTest {
+
+    private ProductDao productDao = new ProductDao(createTestDataSource());
+
+    private JdbcDataSource createTestDataSource() {
+        JdbcDataSource dataSource = new JdbcDataSource();
+        dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        return dataSource;
+    }
 
     @Test
     void shouldListSavedProducts() throws SQLException {
@@ -20,11 +29,10 @@ public class ProductDaoTest {
         Flyway.configure().dataSource(dataSource).load().migrate();
 
         ProductDao productDao = new ProductDao(dataSource);
-        String productName = samplePerson();
-        Integer productPrice = samplePrice();
-        productDao.insertProduct(productName, productPrice);
+        Product product = new Product(samplePerson(), samplePrice());
+        productDao.insertProduct(product);
         assertThat(productDao.list())
-                .contains("Product: " + productName + " - Price: " + productPrice);
+                .contains("Product: " + product.getProductName() + " - Price: " + product.getProductPrice());
     }
 
     private Integer samplePrice() {
